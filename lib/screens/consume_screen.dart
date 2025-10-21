@@ -77,9 +77,10 @@ class _ConsumeScreenState extends ConsumerState<ConsumeScreen> {
           title: const Text('Today\'s Consumption'),
           backgroundColor: Colors.transparent,
           actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: () => ref.invalidate(todayMealsProvider),
+            TextButton.icon(
+              icon: const Icon(Icons.refresh, color: Colors.white),
+              label: const Text('Reset', style: TextStyle(color: Colors.white)),
+              onPressed: () => _resetDailyConsumption(context, ref),
             ),
           ],
         ),
@@ -319,10 +320,12 @@ class _ConsumeScreenState extends ConsumerState<ConsumeScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Colors.white,
-            Colors.grey.shade50,
-          ],
+          colors: meal.isConsumed
+              ? [Colors.green.shade100, Colors.green.shade50]
+              : [
+                  Colors.white,
+                  Colors.grey.shade50,
+                ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -433,18 +436,19 @@ class _ConsumeScreenState extends ConsumerState<ConsumeScreen> {
             // Action buttons
             Column(
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                if (!meal.isConsumed)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.check,
+                          color: Colors.green, size: 20),
+                      onPressed: () => _consumeMeal(context, meal),
+                      tooltip: 'Mark as consumed',
+                    ),
                   ),
-                  child: IconButton(
-                    icon:
-                        const Icon(Icons.check, color: Colors.green, size: 20),
-                    onPressed: () => _consumeMeal(context, meal),
-                    tooltip: 'Mark as consumed',
-                  ),
-                ),
                 const SizedBox(height: 8),
                 Container(
                   decoration: BoxDecoration(
@@ -522,7 +526,10 @@ class _ConsumeScreenState extends ConsumerState<ConsumeScreen> {
 
   void _consumeMeal(BuildContext context, ConsumedMeal meal) async {
     try {
-      // Mark meal as consumed (you can add a consumed field to the model)
+      await ref
+          .read(todayMealsProvider.notifier)
+          .updateMealConsumedStatus(meal.id, true);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${meal.food.name} marked as consumed!'),
@@ -543,6 +550,10 @@ class _ConsumeScreenState extends ConsumerState<ConsumeScreen> {
         ),
       );
     }
+  }
+
+  void _resetDailyConsumption(BuildContext context, WidgetRef ref) async {
+    await ref.read(todayMealsProvider.notifier).resetTodaysMeals();
   }
 
   void _removeMeal(BuildContext context, String mealId) async {

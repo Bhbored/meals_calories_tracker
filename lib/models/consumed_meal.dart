@@ -14,6 +14,7 @@ class ConsumedMeal {
   final double totalCarbs;
   final double totalFat;
   final double totalFiber;
+  final bool isConsumed;
 
   const ConsumedMeal({
     required this.id,
@@ -25,6 +26,7 @@ class ConsumedMeal {
     required this.totalCarbs,
     required this.totalFat,
     required this.totalFiber,
+    this.isConsumed = false,
   });
 
   factory ConsumedMeal.fromFood(Food food, double quantity) {
@@ -55,6 +57,7 @@ class ConsumedMeal {
     double? totalCarbs,
     double? totalFat,
     double? totalFiber,
+    bool? isConsumed,
   }) {
     return ConsumedMeal(
       id: id ?? this.id,
@@ -66,6 +69,7 @@ class ConsumedMeal {
       totalCarbs: totalCarbs ?? this.totalCarbs,
       totalFat: totalFat ?? this.totalFat,
       totalFiber: totalFiber ?? this.totalFiber,
+      isConsumed: isConsumed ?? this.isConsumed,
     );
   }
 }

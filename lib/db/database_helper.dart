@@ -7,7 +7,7 @@ import '../models/food.dart';
 
 class DatabaseHelper {
   static const _databaseName = "meals_tracker.db";
-  static const _databaseVersion = 2;
+  static const _databaseVersion = 3;
 
   static const String tableConsumedMeals = 'consumed_meals';
   static const String tableFoods = 'foods';
@@ -50,7 +50,8 @@ class DatabaseHelper {
         total_protein REAL NOT NULL,
         total_carbs REAL NOT NULL,
         total_fat REAL NOT NULL,
-        total_fiber REAL NOT NULL
+        total_fiber REAL NOT NULL,
+        is_consumed INTEGER NOT NULL DEFAULT 0
       )
     ''');
 
@@ -104,6 +105,7 @@ class DatabaseHelper {
         'total_carbs': meal.totalCarbs,
         'total_fat': meal.totalFat,
         'total_fiber': meal.totalFiber,
+        'is_consumed': meal.isConsumed ? 1 : 0,
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -188,6 +190,16 @@ class DatabaseHelper {
     );
   }
 
+  Future<int> updateMealConsumedStatus(String id, bool isConsumed) async {
+    final db = await database;
+    return await db.update(
+      tableConsumedMeals,
+      {'is_consumed': isConsumed ? 1 : 0},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future<void> clearDailyMeals() async {
     final db = await database;
     final today = DateTime.now();
@@ -254,6 +266,7 @@ class DatabaseHelper {
       totalCarbs: map['total_carbs'],
       totalFat: map['total_fat'],
       totalFiber: map['total_fiber'],
+      isConsumed: map['is_consumed'] == 1,
     );
   }
 

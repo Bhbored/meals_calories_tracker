@@ -49,12 +49,20 @@ class TodayMeals extends _$TodayMeals {
     ref.invalidateSelf();
   }
 
+  Future<void> updateMealConsumedStatus(String mealId, bool isConsumed) async {
+    final repository = ref.read(mealRepositoryProvider);
+    await repository.updateMealConsumedStatus(mealId, isConsumed);
+    ref.invalidateSelf();
+  }
+
   Future<void> updateMealQuantity(String mealId, double quantity) async {
     final repository = ref.read(mealRepositoryProvider);
     await repository.updateMealQuantity(mealId, quantity);
     // Trigger rebuild
     ref.invalidateSelf();
   }
+
+  Future<void> resetTodaysMeals() async {}
 }
 
 // Daily nutrition summary

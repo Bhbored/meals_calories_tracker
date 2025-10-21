@@ -38,6 +38,10 @@ class MealRepository {
     await _databaseHelper.updateMealQuantity(id, quantity);
   }
 
+  Future<void> updateMealConsumedStatus(String id, bool isConsumed) async {
+    await _databaseHelper.updateMealConsumedStatus(id, isConsumed);
+  }
+
   Future<void> clearTodaysMeals() async {
     await _databaseHelper.clearDailyMeals();
   }

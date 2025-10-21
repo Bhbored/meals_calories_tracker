@@ -14,15 +14,33 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStateMixin {
   final PreferencesRepository _preferencesRepository = PreferencesRepository();
   bool _isDark = false;
   bool _isLoadingTheme = true;
+  bool _isDailyGoalExpanded = false;
+
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
     _loadTheme();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<void> _loadTheme() async {
@@ -158,7 +176,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final displayValue = caloriesRemaining.abs();
 
     return Container(
-      height: 120,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -178,48 +195,106 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Row(
+        child: Column(
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(children: [
-                    Icon(isOver ? Icons.trending_up : Icons.trending_down,
-                        color: Colors.white, size: 18),
-                    const SizedBox(width: 6),
-                    Text(isOver ? 'Over Goal' : 'Daily Goal',
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600)),
-                  ]),
-                  const SizedBox(height: 8),
-                  Text('${displayValue.toInt()}',
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold)),
-                  const Text('calories remaining',
-                      style: TextStyle(color: Colors.white70, fontSize: 12)),
-                ],
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(children: [
+                        Icon(isOver ? Icons.trending_up : Icons.trending_down,
+                            color: Colors.white, size: 18),
+                        const SizedBox(width: 6),
+                        Text(isOver ? 'Over Goal' : 'Daily Goal',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600)),
+                      ]),
+                      const SizedBox(height: 8),
+                      Text('${displayValue.toInt()}',
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold)),
+                      const Text('calories remaining',
+                          style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    ],
+                  ),
+                ),
+                dailyProgressAsync.when(
+                  data: (progress) {
+                    final kcal =
+                        (progress['calories'] ?? 0.0).clamp(0.0, double.infinity);
+                    final pct = (kcal / dailyGoalKcal).clamp(0.0, 1.0);
+                    return _buildProgressRing(pct, Colors.white);
+                  },
+                  loading: () => const SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: CircularProgressIndicator(color: Colors.white)),
+                  error: (_, __) => _buildProgressRing(0.0, Colors.white),
+                ),
+              ],
+            ),
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _isDailyGoalExpanded = !_isDailyGoalExpanded;
+                  if (_isDailyGoalExpanded) {
+                    _controller.forward();
+                  } else {
+                    _controller.reverse();
+                  }
+                });
+              },
+              child: Icon(
+                _isDailyGoalExpanded ? Icons.expand_less : Icons.expand_more,
+                color: Colors.white,
               ),
             ),
-            dailyProgressAsync.when(
-              data: (progress) {
-                final kcal =
-                    (progress['calories'] ?? 0.0).clamp(0.0, double.infinity);
-                final pct = (kcal / dailyGoalKcal).clamp(0.0, 1.0);
-                return _buildProgressRing(pct, Colors.white);
-              },
-              loading: () => const SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: CircularProgressIndicator(color: Colors.white)),
-              error: (_, __) => _buildProgressRing(0.0, Colors.white),
+            SizeTransition(
+              sizeFactor: _animation,
+              child: dailyProgressAsync.when(
+                data: (progress) => Column(
+                  children: [
+                    _buildNutritionRow('Protein', progress['protein'] ?? 0, Colors.white),
+                    _buildNutritionRow('Carbs', progress['carbs'] ?? 0, Colors.white),
+                    _buildNutritionRow('Fat', progress['fat'] ?? 0, Colors.white),
+                  ],
+                ),
+                loading: () => const SizedBox(),
+                error: (_, __) => const SizedBox(),
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildNutritionRow(String label, double value, Color color) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(label, style: TextStyle(color: color, fontSize: 12)),
+              Text('${(value * 100).toInt()}%', style: TextStyle(color: color, fontSize: 12)),
+            ],
+          ),
+          const SizedBox(height: 4),
+          LinearProgressIndicator(
+            value: value,
+            backgroundColor: color.withOpacity(0.2),
+            valueColor: AlwaysStoppedAnimation<Color>(color),
+          ),
+        ],
       ),
     );
   }
