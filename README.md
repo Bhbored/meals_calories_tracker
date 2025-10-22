@@ -79,4 +79,4 @@ Make sure you have Flutter installed and set up on your machine!
 ## 🤝 Contributing
 
 I'm still learning, so feel free to suggest improvements or report any issues you find. Pull requests are welcome!
->>>>>>> 316bc3c350fa2331605d28dff59a95d9b6f4b711
+
