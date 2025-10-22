@@ -143,7 +143,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                           final dailyGoal = goals['calories'] ?? 2000.0;
                           final weeklyGoal = dailyGoal * 7;
                           return _buildWeeklyGoalCard(
-                              context, dailyProgressAsync, weeklyGoal, dailyGoal);
+                              context, dailyProgressAsync, weeklyGoal, dailyGoal, nutritionGoalsAsync);
                         },
                         loading: () => _buildLoadingCard(),
                         error: (_, __) => _buildErrorCard(),
@@ -307,217 +307,129 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
     );
   }
 
-    Widget _buildWeeklyGoalCard(
+  Widget _buildWeeklyGoalCard(
+    BuildContext context,
+    AsyncValue<Map<String, double>> dailyProgressAsync,
+    double weeklyGoal,
+    double dailyGoal,
+    AsyncValue<Map<String, double>> nutritionGoalsAsync,
+  ) {
+    return dailyProgressAsync.when(
+      data: (dailyProgress) {
+        final dailyCalorieProgress = dailyProgress['calories'] ?? 0.0;
+        final dailyConsumedCalories = dailyCalorieProgress * dailyGoal;
+        final weeklyProjectedCalories = dailyConsumedCalories * 7;
+        final weeklyCalorieProgress =
+            (weeklyGoal > 0 ? weeklyProjectedCalories / weeklyGoal : 0.0)
+                .clamp(0.0, 1.0);
 
-      BuildContext context,
+        final proteinGoal = nutritionGoalsAsync.valueOrNull?['protein'] ?? 150.0;
+        final carbsGoal = nutritionGoalsAsync.valueOrNull?['carbs'] ?? 250.0;
+        final fatGoal = nutritionGoalsAsync.valueOrNull?['fat'] ?? 67.0;
 
-      AsyncValue<Map<String, double>> dailyProgressAsync,
+        final dailyProteinProgress = dailyProgress['protein'] ?? 0.0;
+        final dailyCarbsProgress = dailyProgress['carbs'] ?? 0.0;
+        final dailyFatProgress = dailyProgress['fat'] ?? 0.0;
 
-      double weeklyGoal,
+        final weeklyProjectedProtein = (dailyProteinProgress * proteinGoal) * 7;
+        final weeklyProjectedCarbs = (dailyCarbsProgress * carbsGoal) * 7;
+        final weeklyProjectedFat = (dailyFatProgress * fatGoal) * 7;
 
-      double dailyGoal,
+        final weeklyProteinProgressRatio = (proteinGoal * 7 > 0 ? weeklyProjectedProtein / (proteinGoal * 7) : 0.0).clamp(0.0, 1.0);
+        final weeklyCarbsProgressRatio = (carbsGoal * 7 > 0 ? weeklyProjectedCarbs / (carbsGoal * 7) : 0.0).clamp(0.0, 1.0);
+        final weeklyFatProgressRatio = (fatGoal * 7 > 0 ? weeklyProjectedFat / (fatGoal * 7) : 0.0).clamp(0.0, 1.0);
 
-    ) {
-
-      return dailyProgressAsync.when(
-
-        data: (dailyProgress) {
-
-          final dailyCalorieProgress = dailyProgress['calories'] ?? 0.0;
-
-          final dailyConsumedCalories = dailyCalorieProgress * dailyGoal;
-
-          final weeklyProjectedCalories = dailyConsumedCalories * 7;
-
-          final weeklyCalorieProgress =
-
-              (weeklyGoal > 0 ? weeklyProjectedCalories / weeklyGoal : 0.0)
-
-                  .clamp(0.0, 1.0);
-
-  
-
-          return Container(
-
-            decoration: BoxDecoration(
-
-              gradient: LinearGradient(
-
-                begin: Alignment.topLeft,
-
-                end: Alignment.bottomRight,
-
-                colors: [Colors.purple.shade400, Colors.purple.shade600],
-
-              ),
-
-              borderRadius: BorderRadius.circular(20),
-
-              boxShadow: [
-
-                BoxShadow(
-
-                  color: Colors.purple.withOpacity(0.3),
-
-                  blurRadius: 10,
-
-                  offset: const Offset(0, 5),
-
-                ),
-
-              ],
-
+        return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.purple.shade400, Colors.purple.shade600],
             ),
-
-            child: Padding(
-
-              padding: const EdgeInsets.all(16),
-
-              child: Column(
-
-                children: [
-
-                  Row(
-
-                    children: [
-
-                      Expanded(
-
-                        child: Column(
-
-                          crossAxisAlignment: CrossAxisAlignment.start,
-
-                          children: [
-
-                            Row(children: const [
-
-                              Icon(Icons.calendar_view_week,
-
-                                  color: Colors.white, size: 18),
-
-                              SizedBox(width: 6),
-
-                              Text('Weekly Goal',
-
-                                  style: TextStyle(
-
-                                      color: Colors.white,
-
-                                      fontSize: 13,
-
-                                      fontWeight: FontWeight.w600)),
-
-                            ]),
-
-                            const SizedBox(height: 8),
-
-                            Text(weeklyProjectedCalories.toInt().toString(),
-
-                                style: const TextStyle(
-
-                                    color: Colors.white,
-
-                                    fontSize: 28,
-
-                                    fontWeight: FontWeight.bold)),
-
-                            const Text('projected calories this week',
-
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.purple.withOpacity(0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(children: const [
+                            Icon(Icons.calendar_view_week,
+                                color: Colors.white, size: 18),
+                            SizedBox(width: 6),
+                            Text('Weekly Goal',
                                 style: TextStyle(
-
-                                    color: Colors.white70, fontSize: 12)),
-
-                          ],
-
-                        ),
-
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600)),
+                          ]),
+                          const SizedBox(height: 8),
+                          Text(weeklyProjectedCalories.toInt().toString(),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold)),
+                          const Text('projected calories this week',
+                              style: TextStyle(
+                                  color: Colors.white70, fontSize: 12)),
+                        ],
                       ),
-
-                      _buildProgressRing(weeklyCalorieProgress, Colors.white),
-
+                    ),
+                    _buildProgressRing(weeklyCalorieProgress, Colors.white),
+                  ],
+                ),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      _isWeeklyGoalExpanded = !_isWeeklyGoalExpanded;
+                      if (_isWeeklyGoalExpanded) {
+                        _weeklyController.forward();
+                      } else {
+                        _weeklyController.reverse();
+                      }
+                    });
+                  },
+                  child: Icon(
+                    _isWeeklyGoalExpanded
+                        ? Icons.expand_less
+                        : Icons.expand_more,
+                    color: Colors.white,
+                  ),
+                ),
+                SizeTransition(
+                  sizeFactor: _weeklyAnimation,
+                  child: Column(
+                    children: [
+                      _buildNutritionRow(
+                          'Protein', weeklyProteinProgressRatio, Colors.white),
+                      _buildNutritionRow(
+                          'Carbs', weeklyCarbsProgressRatio, Colors.white),
+                      _buildNutritionRow(
+                          'Fat', weeklyFatProgressRatio, Colors.white),
                     ],
-
                   ),
-
-                  InkWell(
-
-                    onTap: () {
-
-                      setState(() {
-
-                        _isWeeklyGoalExpanded = !_isWeeklyGoalExpanded;
-
-                        if (_isWeeklyGoalExpanded) {
-
-                          _weeklyController.forward();
-
-                        } else {
-
-                          _weeklyController.reverse();
-
-                        }
-
-                      });
-
-                    },
-
-                    child: Icon(
-
-                      _isWeeklyGoalExpanded
-
-                          ? Icons.expand_less
-
-                          : Icons.expand_more,
-
-                      color: Colors.white,
-
-                    ),
-
-                  ),
-
-                  SizeTransition(
-
-                    sizeFactor: _weeklyAnimation,
-
-                    child: Column(
-
-                      children: [
-
-                        _buildNutritionRow(
-
-                            'Protein', dailyProgress['protein'] ?? 0, Colors.white),
-
-                        _buildNutritionRow(
-
-                            'Carbs', dailyProgress['carbs'] ?? 0, Colors.white),
-
-                        _buildNutritionRow(
-
-                            'Fat', dailyProgress['fat'] ?? 0, Colors.white),
-
-                      ],
-
-                    ),
-
-                  ),
-
-                ],
-
-              ),
-
+                ),
+              ],
             ),
-
-          );
-
-        },
-
-        loading: () => _buildLoadingCard(),
-
-        error: (_, __) => _buildErrorCard(),
-
-      );
-
-    }
+          ),
+        );
+      },
+      loading: () => _buildLoadingCard(),
+      error: (_, __) => _buildErrorCard(),
+    );
+  }
 
   Widget _buildProgressRing(double progress, Color color) {
     final p = progress.clamp(0.0, 1.0);

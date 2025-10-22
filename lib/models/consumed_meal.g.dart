@@ -16,6 +16,7 @@ ConsumedMeal _$ConsumedMealFromJson(Map<String, dynamic> json) => ConsumedMeal(
       totalCarbs: (json['totalCarbs'] as num).toDouble(),
       totalFat: (json['totalFat'] as num).toDouble(),
       totalFiber: (json['totalFiber'] as num).toDouble(),
+      isConsumed: json['isConsumed'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$ConsumedMealToJson(ConsumedMeal instance) =>
@@ -29,4 +30,5 @@ Map<String, dynamic> _$ConsumedMealToJson(ConsumedMeal instance) =>
       'totalCarbs': instance.totalCarbs,
       'totalFat': instance.totalFat,
       'totalFiber': instance.totalFiber,
+      'isConsumed': instance.isConsumed,
     };

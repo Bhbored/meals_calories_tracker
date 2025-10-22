@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meals_calories_tracker/models/food_category.dart';
 import 'home_screen.dart';
 import 'consume_screen.dart';
 import 'analytics_screen.dart';
@@ -26,6 +27,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_currentIndex],
+      drawer: _buildAppDrawer(context), // MODIFIED
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
@@ -51,9 +53,42 @@ class _MainNavigationState extends ConsumerState<MainNavigation> {
             label: 'Analytics',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
+            icon: Icon(Icons.person_outlined),
             activeIcon: Icon(Icons.person),
             label: 'Profile',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAppDrawer(BuildContext context) {
+    final allCategories = FoodCategory.getDefaultCategories();
+
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+            ),
+            child: const Text(
+              'Meal Categories',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+              ),
+            ),
+          ),
+          Column(
+            children: allCategories.map((category) {
+              return SwitchListTile(
+                title: Text(category.name),
+                value: false, // Hardcoded for plain UI
+                onChanged: null, // Disabled as no state to update
+              );
+            }).toList(),
           ),
         ],
       ),

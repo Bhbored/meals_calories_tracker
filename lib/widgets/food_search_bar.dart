@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/food.dart';
@@ -24,39 +25,50 @@ class _FoodSearchBarState extends ConsumerState<FoodSearchBar> {
   final FocusNode _focusNode = FocusNode();
   bool _isSearching = false;
   List<Food> _searchResults = [];
+  Timer? _debounce;
+  String? _errorMessage; // ADDED
 
   @override
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
-  void _performSearch(String query) async {
-    if (query.isEmpty) {
-      setState(() {
-        _searchResults = [];
-        _isSearching = false;
-      });
-      return;
-    }
+  void _performSearch(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    setState(() {
-      _isSearching = true;
+    _debounce = Timer(const Duration(milliseconds: 300), () async {
+      if (query.isEmpty) {
+        setState(() {
+          _searchResults = [];
+          _isSearching = false;
+          _errorMessage = null; // ADDED
+        });
+        return;
+      }
+
+      setState(() {
+        _isSearching = true;
+        _errorMessage = null; // ADDED
+      });
+
+      try {
+        final foods = await ref.read(foodSearchProvider(query, category: widget.category).future);
+        setState(() {
+          _searchResults = foods;
+          _isSearching = false;
+          _errorMessage = null; // ADDED
+        });
+      } catch (e) {
+        setState(() {
+          _searchResults = [];
+          _isSearching = false;
+          _errorMessage = 'Error searching for food: ${e.toString()}'; // MODIFIED
+        });
+      }
     });
-
-    try {
-      final foods = await ref.read(foodSearchProvider(query, category: widget.category).future);
-      setState(() {
-        _searchResults = foods;
-        _isSearching = false;
-      });
-    } catch (e) {
-      setState(() {
-        _searchResults = [];
-        _isSearching = false;
-      });
-    }
   }
 
   void _selectFood(Food food) {
@@ -65,6 +77,7 @@ class _FoodSearchBarState extends ConsumerState<FoodSearchBar> {
     setState(() {
       _searchResults = [];
       _isSearching = false;
+      _errorMessage = null; // ADDED
     });
     
     if (widget.onFoodSelected != null) {
@@ -111,6 +124,7 @@ class _FoodSearchBarState extends ConsumerState<FoodSearchBar> {
                             _controller.clear();
                             setState(() {
                               _searchResults = [];
+                              _errorMessage = null; // ADDED
                             });
                           },
                         )
@@ -126,7 +140,14 @@ class _FoodSearchBarState extends ConsumerState<FoodSearchBar> {
         ),
         
         // Search results dropdown
-        if (_searchResults.isNotEmpty) ...[
+        if (_errorMessage != null) ...[
+          const SizedBox(height: 8),
+          Text(
+            _errorMessage!,
+            style: const TextStyle(color: Colors.red),
+            textAlign: TextAlign.center,
+          ),
+        ] else if (_searchResults.isNotEmpty) ...[
           const SizedBox(height: 8),
           Container(
             constraints: const BoxConstraints(maxHeight: 300),
@@ -153,12 +174,18 @@ class _FoodSearchBarState extends ConsumerState<FoodSearchBar> {
               },
             ),
           ),
+        ] else if (!_isSearching && _controller.text.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Text(
+            'No results found for "${_controller.text}"',
+            style: TextStyle(color: Theme.of(context).hintColor),
+            textAlign: TextAlign.center,
+          ),
         ],
       ],
     );
   }
 }
-
 class FoodSearchResultTile extends StatelessWidget {
   final Food food;
   final VoidCallback onTap;
@@ -203,9 +230,9 @@ class FoodSearchResultTile extends StatelessWidget {
                       color: Theme.of(context).primaryColor,
                     ),
             ),
-            
+
             const SizedBox(width: 12),
-            
+
             // Food details
             Expanded(
               child: Column(
@@ -214,8 +241,8 @@ class FoodSearchResultTile extends StatelessWidget {
                   Text(
                     food.name,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                          fontWeight: FontWeight.w600,
+                        ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -261,7 +288,7 @@ class FoodSearchResultTile extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Add button
             Container(
               padding: const EdgeInsets.all(8),
@@ -291,9 +318,9 @@ class FoodSearchResultTile extends StatelessWidget {
       child: Text(
         text,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: color,
-          fontWeight: FontWeight.w500,
-        ),
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
       ),
     );
   }

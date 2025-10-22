@@ -179,7 +179,7 @@ class PreferencesRepository {
     return preferences.isDarkMode;
   }
 
-  /// Get all nutrition goals as a map
+
   Future<Map<String, double>> getNutritionGoals() async {
     final preferences = await getPreferences();
     return {
