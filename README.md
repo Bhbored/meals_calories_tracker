@@ -12,6 +12,15 @@ A modern and intuitive mobile application designed to help you effortlessly trac
 *   **Food API Integration:** Access a vast database of food items and their nutritional information. 🌐
 *   **Modern User Interface:** Enjoy a sleek and responsive design. 📱
 
+## ✨ What You Can Do
+
+*   **Log Your Meals:** Add your breakfast, lunch, dinner, and snacks quickly. You can categorize them and include details like portion size. 🍽️
+*   **Track Calories:** See how many calories you're eating each day and compare it to your goals. 🔥
+*   **View Analytics:** Check out charts that show your eating habits over time - helpful for seeing patterns! 📈
+*   **Save Your Data:** All your meal information is stored right on your phone, so it's always there when you need it. 💾
+*   **Search Food:** Look up different foods in a database to find their nutritional information and add them to your meals. 🌐
+*   **User-Friendly Design:** The app has a clean, easy-to-use interface that works well on different devices. 📱
+
 ## 🛠️ Technologies Used
 
 *   **Flutter:** The robust framework for building natively compiled applications for mobile, web, and desktop from a single codebase. 💙
@@ -34,15 +43,6 @@ A modern and intuitive mobile application designed to help you effortlessly trac
 | :----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: |
 | ![1](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761113379.png) | ![2](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117342.png) | ![3](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117377.png) | ![4[]()](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117385.png) |
 | ![5](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117387.png) | ![6](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117395.png) |![6](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117387.png) 
-
-## ✨ What You Can Do
-
-*   **Log Your Meals:** Add your breakfast, lunch, dinner, and snacks quickly. You can categorize them and include details like portion size. 🍽️
-*   **Track Calories:** See how many calories you're eating each day and compare it to your goals. 🔥
-*   **View Analytics:** Check out charts that show your eating habits over time - helpful for seeing patterns! 📈
-*   **Save Your Data:** All your meal information is stored right on your phone, so it's always there when you need it. 💾
-*   **Search Food:** Look up different foods in a database to find their nutritional information and add them to your meals. 🌐
-*   **User-Friendly Design:** The app has a clean, easy-to-use interface that works well on different devices. 📱
 
 
 ## 🚀 Getting Started
