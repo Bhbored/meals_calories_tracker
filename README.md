@@ -30,8 +30,10 @@ A modern and intuitive mobile application designed to help you effortlessly trac
 
 ## 📸 Screenshots
 
-_Coming Soon! Check out the `screenshots/` folder for visual previews of the app._
-=======
+|                                                                                                                    |                                                                                                                    |                                                                                                                    |                                                                                                                    |
+| :----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: |
+| ![1](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761113379.png) | ![2](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117342.png) | ![3](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117377.png) | ![4[]()](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117385.png) |
+| ![5](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117387.png) | ![6](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117395.png) |![6](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117387.png) 
 # Meal's Calories Tracker 🍎📊
 
 A mobile application that helps you keep track of what you eat and how many calories you're consuming. Built with Flutter, this app makes it easy to log meals and see your eating patterns over time through simple charts and graphs.
@@ -60,13 +62,6 @@ A mobile application that helps you keep track of what you eat and how many calo
     *   `shared_preferences`: For saving simple settings like daily calorie goals. ⚙️
     *   `uuid`: Helps generate unique IDs for each meal entry. 🆔
     *   `json_annotation` & `json_serializable`: Makes it easier to work with JSON data from APIs. 🔄
-
-### 📸 Screenshots
-
-|                                                                                                                    |                                                                                                                    |                                                                                                                    |                                                                                                                    |
-| :----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: |
-| ![1](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761113379.png) | ![2](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117342.png) | ![3](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117377.png) | ![4[]()](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117385.png) |
-| ![5](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117387.png) | ![6](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117395.png) |![6](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117387.png) 
 
 ## 🚀 Getting Started
 
