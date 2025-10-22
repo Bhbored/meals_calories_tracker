@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../widgets/gradient_background.dart';
-import '../repos/preferences_repository.dart';
-import '../providers/meal_provider.dart';
-import '../models/consumed_meal.dart';
+import '../base/widgets/gradient_background.dart';
+import '../../core/db/repos/preferences_repository.dart';
+import '../../providers/meal_provider.dart';
+import '../../models/consumed_meal.dart';
 
 class ConsumeScreen extends ConsumerStatefulWidget {
   const ConsumeScreen({super.key});

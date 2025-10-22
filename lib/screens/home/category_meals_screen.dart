@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../widgets/gradient_background.dart';
-import '../repos/preferences_repository.dart';
-import '../providers/meal_provider.dart';
-import '../models/food_category.dart';
-import '../models/consumed_meal.dart';
+import '../base/widgets/gradient_background.dart';
+import '../../core/db/repos/preferences_repository.dart';
+import '../../providers/meal_provider.dart';
+import '../../models/food_category.dart';
+import '../../models/consumed_meal.dart';
 
 /// Small helpers to avoid dynamic/tear-off pitfalls
 extension _Lower on String {

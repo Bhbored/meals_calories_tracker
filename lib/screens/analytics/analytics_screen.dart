@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart'; // Import fl_chart
 import 'package:intl/intl.dart'; // For date formatting
+import 'package:meals_calories_tracker/screens/analytics/widgets/daily_calorie_chart.dart';
 
-import '../widgets/gradient_background.dart';
-import '../repos/preferences_repository.dart';
-import '../providers/analytics_provider.dart'; // Import analytics providers
-import '../providers/meal_provider.dart'; // For nutrition goals
+import '../base/widgets/gradient_background.dart';
+import '../../core/db/repos/preferences_repository.dart';
+import '../../providers/analytics_provider.dart'; // Import analytics providers
 
 class AnalyticsScreen extends ConsumerStatefulWidget {
   const AnalyticsScreen({super.key});
@@ -81,7 +81,7 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
                 _buildChartCard(
                   context,
                   title: 'Daily Calorie Intake (Last 7 Days)',
-                  child: _buildDailyCalorieChart(context),
+                  child: DailyCalorieChart(_isDark),
                 ),
                 const SizedBox(height: 24),
 
@@ -89,7 +89,7 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
                 _buildChartCard(
                   context,
                   title: 'Today\'s Macronutrient Distribution',
-                  child: _buildTodayMacrosPieChart(context),
+                  child: DailyPieChart(context),
                 ),
                 const SizedBox(height: 24),
 
@@ -141,192 +141,6 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildDailyCalorieChart(BuildContext context) {
-    final calorieHistoryAsync = ref.watch(calorieHistoryProvider(7));
-    final nutritionGoalsAsync = ref.watch(nutritionGoalsProvider);
-
-    return calorieHistoryAsync.when(
-      data: (history) {
-        if (history.isEmpty) {
-          return _buildNoDataWidget('No calorie data for the last 7 days.');
-        }
-
-        final dailyGoal =
-            nutritionGoalsAsync.valueOrNull?['calories'] ?? 2000.0;
-
-        final List<FlSpot> spots = [];
-        final List<BarChartGroupData> barGroups = [];
-        double maxCalories = dailyGoal * 1.2; // Max Y-axis value
-
-        for (int i = 0; i < history.length; i++) {
-          final day = history[i];
-          final calories = (day['calories'] as double);
-          spots.add(FlSpot(i.toDouble(), calories));
-          barGroups.add(
-            BarChartGroupData(
-              x: i,
-              barRods: [
-                BarChartRodData(
-                  toY: calories,
-                  color: calories > dailyGoal
-                      ? Colors.redAccent
-                      : Colors.blueAccent,
-                  width: 10,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ],
-            ),
-          );
-          if (calories > maxCalories) maxCalories = calories * 1.1;
-        }
-
-        return BarChart(
-          BarChartData(
-            barGroups: barGroups,
-            titlesData: FlTitlesData(
-              show: true,
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) {
-                    final date = DateTime.now().subtract(
-                        Duration(days: history.length - 1 - value.toInt()));
-                    return SideTitleWidget(
-                      axisSide: meta.axisSide,
-                      space: 4,
-                      child: Text(DateFormat('EEE').format(date),
-                          style: TextStyle(
-                              color: _isDark ? Colors.white70 : Colors.black54,
-                              fontSize: 10)),
-                    );
-                  },
-                ),
-              ),
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) {
-                    return Text(value.toInt().toString(),
-                        style: TextStyle(
-                            color: _isDark ? Colors.white70 : Colors.black54,
-                            fontSize: 10));
-                  },
-                  reservedSize: 30,
-                ),
-              ),
-              topTitles:
-                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              rightTitles:
-                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            ),
-            gridData: FlGridData(
-              show: true,
-              drawVerticalLine: false,
-              getDrawingHorizontalLine: (value) {
-                return FlLine(
-                  color:
-                      (_isDark ? Colors.white12 : Colors.grey.withOpacity(0.2)),
-                  strokeWidth: 1,
-                );
-              },
-            ),
-            borderData: FlBorderData(
-              show: false,
-            ),
-            barTouchData: BarTouchData(
-              touchTooltipData: BarTouchTooltipData(
-                getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                  final date = DateTime.now()
-                      .subtract(Duration(days: history.length - 1 - group.x));
-                  return BarTooltipItem(
-                    '${DateFormat('MMM d').format(date)}\n',
-                    const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: '${rod.toY.toInt()} kcal',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-            maxY: maxCalories,
-            minY: 0,
-          ),
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => _buildErrorWidget(error),
-    );
-  }
-
-  Widget _buildTodayMacrosPieChart(BuildContext context) {
-    final todayMacrosAsync = ref.watch(todayMacrosProvider);
-
-    return todayMacrosAsync.when(
-      data: (macros) {
-        if (macros.isEmpty ||
-            (macros['protein'] == 0 &&
-                macros['carbs'] == 0 &&
-                macros['fat'] == 0)) {
-          return _buildNoDataWidget('No macro data for today.');
-        }
-
-        final protein = macros['protein'] ?? 0;
-        final carbs = macros['carbs'] ?? 0;
-        final fat = macros['fat'] ?? 0;
-
-        return PieChart(
-          PieChartData(
-            sections: [
-              PieChartSectionData(
-                color: Colors.blue,
-                value: protein,
-                title: '${protein.toInt()}% P',
-                radius: 50,
-                titleStyle: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-              PieChartSectionData(
-                color: Colors.green,
-                value: carbs,
-                title: '${carbs.toInt()}% C',
-                radius: 50,
-                titleStyle: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-              PieChartSectionData(
-                color: Colors.orange,
-                value: fat,
-                title: '${fat.toInt()}% F',
-                radius: 50,
-                titleStyle: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-            ],
-            sectionsSpace: 2,
-            centerSpaceRadius: 40,
-            borderData: FlBorderData(show: false),
-          ),
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => _buildErrorWidget(error),
     );
   }
 
@@ -383,7 +197,7 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => _buildErrorWidget(error),
+      error: (error, stack) => DailyPieChart(error),
     );
   }
 
@@ -434,7 +248,7 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
         );
       },
       loading: () => _buildLoadingCard(),
-      error: (error, stack) => _buildErrorWidget(error),
+      error: (error, stack) => DailyPieChart(error),
     );
   }
 
@@ -510,7 +324,7 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
             color: Colors.orange,
           ),
           loading: () => _buildLoadingCard(),
-          error: (error, stack) => _buildErrorWidget(error),
+          error: (error, stack) => DailyPieChart(error),
         ),
         const SizedBox(height: 16),
         monthlyHighlightsAsync.when(
@@ -553,7 +367,7 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
             );
           },
           loading: () => _buildLoadingCard(),
-          error: (error, stack) => _buildErrorWidget(error),
+          error: (error, stack) => DailyPieChart(error),
         ),
       ],
     );
@@ -629,7 +443,7 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
     );
   }
 
-  Widget _buildErrorWidget(Object error) {
+  Widget DailyPieChart(Object error) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

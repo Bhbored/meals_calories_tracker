@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:meals_calories_tracker/screens/edit_goal_screen.dart'; // REMOVED
-import '../widgets/gradient_background.dart';
-import '../repos/preferences_repository.dart';
-import '../providers/meal_provider.dart';
+import '../base/widgets/gradient_background.dart';
+import '../../core/db/repos/preferences_repository.dart';
+import '../../providers/meal_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -95,124 +95,131 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
 
-                  const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-                  // Nutrition goals
-                  nutritionGoalsAsync.when(
-                    data: (goals) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row( // ADDED
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween, // ADDED
-                          children: [ // ADDED
-                            Text(
-                              'Nutrition Goals',
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                            IconButton( // ADDED
-                              icon: const Icon(Icons.edit), // ADDED
-                              onPressed: () => _showEditGoalsBottomSheet(context, goals), // ADDED
-                            ), // ADDED
-                          ], // ADDED
-                        ), // ADDED
-                        const SizedBox(height: 12),
-
-                        Card(
-                          child: Column(
-                            children: [
-                              _buildGoalTile(
-                                context,
-                                'Daily Calories',
-                                '${goals['calories']?.toInt() ?? 2000} cal', // MODIFIED
-                                Icons.local_fire_department,
-                                Colors.orange,
-                              ),
-                              const Divider(),
-                              _buildGoalTile(
-                                context,
-                                'Protein',
-                                '${goals['protein']?.toInt() ?? 150} g', // MODIFIED
-                                Icons.fitness_center,
-                                Colors.blue,
-                              ),
-                              const Divider(),
-                              _buildGoalTile(
-                                context,
-                                'Carbohydrates',
-                                '${goals['carbs']?.toInt() ?? 250} g', // MODIFIED
-                                Icons.grain,
-                                Colors.green,
-                              ),
-                              const Divider(),
-                              _buildGoalTile(
-                                context,
-                                'Fat',
-                                '${goals['fat']?.toInt() ?? 67} g', // MODIFIED
-                                Icons.opacity,
-                                Colors.purple,
-                              ),
-                              const Divider(),
-                              _buildGoalTile(
-                                context,
-                                'Fiber',
-                                '${goals['fiber']?.toInt() ?? 25} g', // MODIFIED
-                                Icons.eco,
-                                Colors.green[700]!,
-                              ),
-                            ],
+                // Nutrition goals
+                nutritionGoalsAsync.when(
+                  data: (goals) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        // ADDED
+                        mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween, // ADDED
+                        children: [
+                          // ADDED
+                          Text(
+                            'Nutrition Goals',
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
+                          IconButton(
+                            // ADDED
+                            icon: const Icon(Icons.edit), // ADDED
+                            onPressed: () => _showEditGoalsBottomSheet(
+                                context, goals), // ADDED
+                          ), // ADDED
+                        ], // ADDED
+                      ), // ADDED
+                      const SizedBox(height: 12),
+
+                      Card(
+                        child: Column(
+                          children: [
+                            _buildGoalTile(
+                              context,
+                              'Daily Calories',
+                              '${goals['calories']?.toInt() ?? 2000} cal', // MODIFIED
+                              Icons.local_fire_department,
+                              Colors.orange,
+                            ),
+                            const Divider(),
+                            _buildGoalTile(
+                              context,
+                              'Protein',
+                              '${goals['protein']?.toInt() ?? 150} g', // MODIFIED
+                              Icons.fitness_center,
+                              Colors.blue,
+                            ),
+                            const Divider(),
+                            _buildGoalTile(
+                              context,
+                              'Carbohydrates',
+                              '${goals['carbs']?.toInt() ?? 250} g', // MODIFIED
+                              Icons.grain,
+                              Colors.green,
+                            ),
+                            const Divider(),
+                            _buildGoalTile(
+                              context,
+                              'Fat',
+                              '${goals['fat']?.toInt() ?? 67} g', // MODIFIED
+                              Icons.opacity,
+                              Colors.purple,
+                            ),
+                            const Divider(),
+                            _buildGoalTile(
+                              context,
+                              'Fiber',
+                              '${goals['fiber']?.toInt() ?? 25} g', // MODIFIED
+                              Icons.eco,
+                              Colors.green[700]!,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    loading: () => const Card(
-                      child: Padding(
-                        padding: EdgeInsets.all(40),
-                        child: Center(child: CircularProgressIndicator()),
                       ),
-                    ),
-                    error: (error, stack) => Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Text('Error loading goals: $error'),
-                      ),
+                    ],
+                  ),
+                  loading: () => const Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(40),
+                      child: Center(child: CircularProgressIndicator()),
                     ),
                   ),
-
-                  const SizedBox(height: 16),
-
-                  // App info
-                  Card(
-                    child: Column(
-                      children: [
-                        const ListTile(
-                          leading: Icon(Icons.info),
-                          title: Text('About'),
-                          subtitle: Text('Meal Calories Tracker v1.0.0'),
-                        ),
-                        const Divider(),
-                        ListTile(
-                          leading: const Icon(Icons.feedback),
-                          title: const Text('Feedback'),
-                          subtitle: const Text('Help us improve the app'),
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Feedback feature coming soon!')),
-                            );
-                          },
-                        ),
-                        const Divider(),
-                        ListTile(
-                          leading: const Icon(Icons.privacy_tip),
-                          title: const Text('Privacy Policy'),
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Privacy policy coming soon!')),
-                            );
-                          },
-                        ),
-                      ],
+                  error: (error, stack) => Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text('Error loading goals: $error'),
                     ),
                   ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // App info
+                Card(
+                  child: Column(
+                    children: [
+                      const ListTile(
+                        leading: Icon(Icons.info),
+                        title: Text('About'),
+                        subtitle: Text('Meal Calories Tracker v1.0.0'),
+                      ),
+                      const Divider(),
+                      ListTile(
+                        leading: const Icon(Icons.feedback),
+                        title: const Text('Feedback'),
+                        subtitle: const Text('Help us improve the app'),
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Feedback feature coming soon!')),
+                          );
+                        },
+                      ),
+                      const Divider(),
+                      ListTile(
+                        leading: const Icon(Icons.privacy_tip),
+                        title: const Text('Privacy Policy'),
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Privacy policy coming soon!')),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
 
                 const SizedBox(height: 32),
 
@@ -252,9 +259,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       trailing: Text(
         value,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          color: color,
-          fontWeight: FontWeight.bold,
-        ),
+              color: color,
+              fontWeight: FontWeight.bold,
+            ),
       ),
       // onTap: () => _editGoal(context, title, initialValue), // REMOVED
     );
@@ -271,7 +278,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   //   );
   // }
 
-  void _showEditGoalsBottomSheet(BuildContext context, Map<String, double> currentGoals) { // ADDED
+  void _showEditGoalsBottomSheet(
+      BuildContext context, Map<String, double> currentGoals) {
+    // ADDED
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -296,7 +305,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             onPressed: () {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Data reset feature coming soon!')),
+                const SnackBar(
+                    content: Text('Data reset feature coming soon!')),
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -315,7 +325,8 @@ class _EditGoalsBottomSheet extends ConsumerStatefulWidget {
   const _EditGoalsBottomSheet({required this.initialGoals});
 
   @override
-  ConsumerState<_EditGoalsBottomSheet> createState() => _EditGoalsBottomSheetState();
+  ConsumerState<_EditGoalsBottomSheet> createState() =>
+      _EditGoalsBottomSheetState();
 }
 
 class _EditGoalsBottomSheetState extends ConsumerState<_EditGoalsBottomSheet> {
@@ -328,11 +339,16 @@ class _EditGoalsBottomSheetState extends ConsumerState<_EditGoalsBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _caloriesController = TextEditingController(text: widget.initialGoals['calories']?.toInt().toString());
-    _proteinController = TextEditingController(text: widget.initialGoals['protein']?.toInt().toString());
-    _carbsController = TextEditingController(text: widget.initialGoals['carbs']?.toInt().toString());
-    _fatController = TextEditingController(text: widget.initialGoals['fat']?.toInt().toString());
-    _fiberController = TextEditingController(text: widget.initialGoals['fiber']?.toInt().toString());
+    _caloriesController = TextEditingController(
+        text: widget.initialGoals['calories']?.toInt().toString());
+    _proteinController = TextEditingController(
+        text: widget.initialGoals['protein']?.toInt().toString());
+    _carbsController = TextEditingController(
+        text: widget.initialGoals['carbs']?.toInt().toString());
+    _fatController = TextEditingController(
+        text: widget.initialGoals['fat']?.toInt().toString());
+    _fiberController = TextEditingController(
+        text: widget.initialGoals['fiber']?.toInt().toString());
   }
 
   @override
@@ -349,11 +365,15 @@ class _EditGoalsBottomSheetState extends ConsumerState<_EditGoalsBottomSheet> {
     final notifier = ref.read(nutritionGoalsProvider.notifier);
 
     try {
-      await notifier.updateDailyCalorieGoal(double.tryParse(_caloriesController.text) ?? 0);
-      await notifier.updateProteinGoal(double.tryParse(_proteinController.text) ?? 0);
-      await notifier.updateCarbGoal(double.tryParse(_carbsController.text) ?? 0);
+      await notifier.updateDailyCalorieGoal(
+          double.tryParse(_caloriesController.text) ?? 0);
+      await notifier
+          .updateProteinGoal(double.tryParse(_proteinController.text) ?? 0);
+      await notifier
+          .updateCarbGoal(double.tryParse(_carbsController.text) ?? 0);
       await notifier.updateFatGoal(double.tryParse(_fatController.text) ?? 0);
-      await notifier.updateFiberGoal(double.tryParse(_fiberController.text) ?? 0);
+      await notifier
+          .updateFiberGoal(double.tryParse(_fiberController.text) ?? 0);
 
       // Invalidate the provider to trigger a rebuild with new goals
       ref.invalidate(nutritionGoalsProvider);
@@ -388,18 +408,26 @@ class _EditGoalsBottomSheetState extends ConsumerState<_EditGoalsBottomSheet> {
           children: [
             Text(
               'Edit Nutrition Goals',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
-            _buildGoalInputField('Daily Calories (kcal)', _caloriesController, Icons.local_fire_department, Colors.orange),
+            _buildGoalInputField('Daily Calories (kcal)', _caloriesController,
+                Icons.local_fire_department, Colors.orange),
             const SizedBox(height: 16),
-            _buildGoalInputField('Protein (g)', _proteinController, Icons.fitness_center, Colors.blue),
+            _buildGoalInputField('Protein (g)', _proteinController,
+                Icons.fitness_center, Colors.blue),
             const SizedBox(height: 16),
-            _buildGoalInputField('Carbohydrates (g)', _carbsController, Icons.grain, Colors.green),
+            _buildGoalInputField('Carbohydrates (g)', _carbsController,
+                Icons.grain, Colors.green),
             const SizedBox(height: 16),
-            _buildGoalInputField('Fat (g)', _fatController, Icons.opacity, Colors.purple),
+            _buildGoalInputField(
+                'Fat (g)', _fatController, Icons.opacity, Colors.purple),
             const SizedBox(height: 16),
-            _buildGoalInputField('Fiber (g)', _fiberController, Icons.eco, Colors.green[700]!),
+            _buildGoalInputField(
+                'Fiber (g)', _fiberController, Icons.eco, Colors.green[700]!),
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -422,7 +450,8 @@ class _EditGoalsBottomSheetState extends ConsumerState<_EditGoalsBottomSheet> {
     );
   }
 
-  Widget _buildGoalInputField(String label, TextEditingController controller, IconData icon, Color color) {
+  Widget _buildGoalInputField(String label, TextEditingController controller,
+      IconData icon, Color color) {
     return TextField(
       controller: controller,
       keyboardType: TextInputType.number,

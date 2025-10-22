@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'models/theme.dart';
-import 'repos/preferences_repository.dart';
-import 'screens/main_navigation.dart';
+import 'core/db/repos/preferences_repository.dart';
+import 'screens/base/main_navigation.dart';
 
 void main() {
   runApp(

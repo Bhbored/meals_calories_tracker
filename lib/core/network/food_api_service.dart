@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/food.dart';
+import '../../models/food.dart';
 
 class FoodApiService {
   static const String _baseUrl = 'https://world.openfoodfacts.org';
@@ -26,7 +26,8 @@ class FoodApiService {
 
       final response = await http.get(uri).timeout(const Duration(seconds: 20));
 
-      print('FoodApiService: Received response with status: ${response.statusCode}'); // ADDED LOG
+      print(
+          'FoodApiService: Received response with status: ${response.statusCode}'); // ADDED LOG
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -40,7 +41,8 @@ class FoodApiService {
             .cast<Food>()
             .toList();
       }
-      print('FoodApiService: API returned non-200 status: ${response.statusCode}'); // ADDED LOG
+      print(
+          'FoodApiService: API returned non-200 status: ${response.statusCode}'); // ADDED LOG
       return [];
     } catch (e) {
       print('Error in searchFoods: $e');

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meals_calories_tracker/models/food_category.dart';
-import 'home_screen.dart';
-import 'consume_screen.dart';
-import 'analytics_screen.dart';
-import 'profile_screen.dart';
+import '../home/home_screen.dart';
+import '../consume/consume_screen.dart';
+import '../analytics/analytics_screen.dart';
+import '../profile/profile_screen.dart';
 
 class MainNavigation extends ConsumerStatefulWidget {
   const MainNavigation({super.key});

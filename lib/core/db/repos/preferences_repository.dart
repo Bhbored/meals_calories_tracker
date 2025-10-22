@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/user_preferences.dart';
+import '../../../models/user_preferences.dart';
 
 class PreferencesRepository {
   static const String _preferencesKey = 'user_preferences';
   static const String _lastResetDateKey = 'last_reset_date';
-  
+
   SharedPreferences? _prefs;
-  
+
   Future<SharedPreferences> get _preferences async {
     _prefs ??= await SharedPreferences.getInstance();
     return _prefs!;
@@ -17,7 +17,7 @@ class PreferencesRepository {
   Future<UserPreferences> getPreferences() async {
     final prefs = await _preferences;
     final preferencesJson = prefs.getString(_preferencesKey);
-    
+
     if (preferencesJson != null) {
       try {
         final Map<String, dynamic> json = jsonDecode(preferencesJson);
@@ -27,7 +27,7 @@ class PreferencesRepository {
         return const UserPreferences();
       }
     }
-    
+
     return const UserPreferences();
   }
 
@@ -55,7 +55,8 @@ class PreferencesRepository {
   /// Toggle dark mode
   Future<void> toggleDarkMode() async {
     final currentPrefs = await getPreferences();
-    final updatedPrefs = currentPrefs.copyWith(isDarkMode: !currentPrefs.isDarkMode);
+    final updatedPrefs =
+        currentPrefs.copyWith(isDarkMode: !currentPrefs.isDarkMode);
     await savePreferences(updatedPrefs);
   }
 
@@ -122,23 +123,24 @@ class PreferencesRepository {
     final prefs = await _preferences;
     final preferences = await getPreferences();
     final lastResetString = prefs.getString(_lastResetDateKey);
-    
+
     if (lastResetString == null) {
       return true; // First time, needs reset
     }
-    
+
     final lastReset = DateTime.parse(lastResetString);
     final now = DateTime.now();
     final resetTime = _parseResetTime(preferences.resetTime);
-    
+
     // Calculate the last reset time for today
-    final todayReset = DateTime(now.year, now.month, now.day, resetTime.hour, resetTime.minute);
-    
+    final todayReset = DateTime(
+        now.year, now.month, now.day, resetTime.hour, resetTime.minute);
+
     // If current time is after today's reset time and last reset was before today's reset time
     if (now.isAfter(todayReset) && lastReset.isBefore(todayReset)) {
       return true;
     }
-    
+
     // If it's past midnight and reset time is after midnight, check if we need to reset
     if (resetTime.hour > 0 && now.hour < resetTime.hour) {
       final yesterdayReset = todayReset.subtract(const Duration(days: 1));
@@ -146,7 +148,7 @@ class PreferencesRepository {
         return true;
       }
     }
-    
+
     return false;
   }
 
@@ -168,7 +170,7 @@ class PreferencesRepository {
     final parts = resetTime.split(':');
     final hour = int.tryParse(parts[0]) ?? 0;
     final minute = parts.length > 1 ? (int.tryParse(parts[1]) ?? 0) : 0;
-    
+
     final now = DateTime.now();
     return DateTime(now.year, now.month, now.day, hour, minute);
   }
@@ -178,7 +180,6 @@ class PreferencesRepository {
     final preferences = await getPreferences();
     return preferences.isDarkMode;
   }
-
 
   Future<Map<String, double>> getNutritionGoals() async {
     final preferences = await getPreferences();

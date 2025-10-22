@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/theme.dart';
+import '../../../models/theme.dart';
 
 class GradientBackground extends StatelessWidget {
   final Widget child;

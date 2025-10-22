@@ -1,8 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../models/consumed_meal.dart';
 import '../models/food.dart';
-import '../repos/meal_repository.dart';
-import '../repos/preferences_repository.dart';
+import '../core/db/repos/meal_repository.dart';
+import '../core/db/repos/preferences_repository.dart';
 
 part 'meal_provider.g.dart';
 

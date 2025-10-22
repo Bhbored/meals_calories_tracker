@@ -1,7 +1,7 @@
-import '../db/database_helper.dart';
-import '../models/consumed_meal.dart';
-import '../models/food.dart';
-import '../services/food_api_service.dart';
+import '../database_helper.dart';
+import '../../../models/consumed_meal.dart';
+import '../../../models/food.dart';
+import '../../network/food_api_service.dart';
 
 class MealRepository {
   final DatabaseHelper _databaseHelper;

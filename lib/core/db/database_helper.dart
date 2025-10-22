@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../models/consumed_meal.dart';
-import '../models/food.dart';
+import '../../models/consumed_meal.dart';
+import '../../models/food.dart';
 
 class DatabaseHelper {
   static const _databaseName = "meals_tracker.db";

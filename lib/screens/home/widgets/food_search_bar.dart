@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/food.dart';
-import '../providers/meal_provider.dart';
+import '../../../models/food.dart';
+import '../../../providers/meal_provider.dart';
 
 class FoodSearchBar extends ConsumerStatefulWidget {
   final Function(Food)? onFoodSelected;
@@ -55,7 +55,8 @@ class _FoodSearchBarState extends ConsumerState<FoodSearchBar> {
       });
 
       try {
-        final foods = await ref.read(foodSearchProvider(query, category: widget.category).future);
+        final foods = await ref
+            .read(foodSearchProvider(query, category: widget.category).future);
         setState(() {
           _searchResults = foods;
           _isSearching = false;
@@ -65,7 +66,8 @@ class _FoodSearchBarState extends ConsumerState<FoodSearchBar> {
         setState(() {
           _searchResults = [];
           _isSearching = false;
-          _errorMessage = 'Error searching for food: ${e.toString()}'; // MODIFIED
+          _errorMessage =
+              'Error searching for food: ${e.toString()}'; // MODIFIED
         });
       }
     });
@@ -79,7 +81,7 @@ class _FoodSearchBarState extends ConsumerState<FoodSearchBar> {
       _isSearching = false;
       _errorMessage = null; // ADDED
     });
-    
+
     if (widget.onFoodSelected != null) {
       widget.onFoodSelected!(food);
     }
@@ -138,7 +140,7 @@ class _FoodSearchBarState extends ConsumerState<FoodSearchBar> {
             ),
           ),
         ),
-        
+
         // Search results dropdown
         if (_errorMessage != null) ...[
           const SizedBox(height: 8),
@@ -186,6 +188,7 @@ class _FoodSearchBarState extends ConsumerState<FoodSearchBar> {
     );
   }
 }
+
 class FoodSearchResultTile extends StatelessWidget {
   final Food food;
   final VoidCallback onTap;
