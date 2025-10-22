@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Meal's Calories 🍎📊
 
 A modern and intuitive mobile application designed to help you effortlessly track your meals, monitor calorie intake, and gain valuable insights into your dietary habits. With a beautiful UI and powerful analytics, managing your nutrition has never been easier!
