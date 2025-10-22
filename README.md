@@ -27,13 +27,16 @@ A mobile application that helps you keep track of what you eat and how many calo
     *   `uuid`: Helps generate unique IDs for each meal entry. 🆔
     *   `json_annotation` & `json_serializable`: Makes it easier to work with JSON data from APIs. 🔄
 
-## 📸 App Screenshots
+### 📸 Screenshots
 
-_Check out how the app looks! You can find screenshots in the `screenshots/` folder once I finish taking them._
+|                                                                                                                    |                                                                                                                    |                                                                                                                    |                                                                                                                    |
+| :----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: |
+| ![1](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761113379.png) | ![2](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117342.png) | ![3](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117373.png) | ![4[]()](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117385.png) |
+| ![5](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117387.png) | ![6](https://github.com/Bhbored/meals_calories_tracker/blob/main/screenshots/Screenshot_1761117395.png) |
 
 ## 🚀 Getting Started
 
-1.  **Clone the repo:** `git clone [your-repo-url]`
+1.  **Clone the repo:** `git clone https://github.com/Bhbored/meals_calories_tracker.git`
 2.  **Get dependencies:** Run `flutter pub get` in the project folder
 3.  **Run the app:** `flutter run` to start it up
 
